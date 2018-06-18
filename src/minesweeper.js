@@ -5,15 +5,15 @@ class Game{
 
   playMove(rowIndex, columnIndex){
     this._board.flipTile(rowIndex, columnIndex);
-    if(this._board.playerBoard[rowIndex,columnIndex] === 'B'){
-      console.log('GAME OVER');
+    if(this._board.playerBoard[rowIndex,columnIndex] === 'B') {
+      console.log('GAME OVER! Here was the final board');
       this._board.print();
-    } else if (!this._board.hasSafeTiles()){
-        //console.log(this._board.hasSafeTiles());
-        console.log('Congratulations - YOU WON!');
+    } else if (this._board.hasNonBombEmptySpaces()){
+        console.log('Current board:');
+        this._board.print();        //console.log(this._board.hasSafeTiles());
     } else {
-      console.log('Current board:');
-      this._board.print();
+        console.log('Congratulations - YOU WON! - Here is the winning board:');
+        this._board.print();
     }
   }
 }
@@ -21,9 +21,10 @@ class Game{
 class Board{
   constructor (numberOfRows, numberOfColumns, numberOfBombs){
     this._numberOfBombs = numberOfBombs;
-    this._numberOfTiles = numberOfRows * numberOfColumns;
+    //this._numberOfTiles = numberOfRows * numberOfColumns;
+    this._numberOfEmptySpaces = numberOfRows * numberOfColumns;
     this._playerBoard = Board.generatePlayerBoard(numberOfRows, numberOfColumns);
-    this._bombBoard = Board.generateBombBoard(numberOfRows, numberOfColumns);
+    this._bombBoard = Board.generateBombBoard(numberOfRows, numberOfColumns, numberOfBombs);
   }
 
   get playerBoard (){
@@ -32,13 +33,15 @@ class Board{
 
   flipTile (rowIndex, columnIndex) {
     if (this._playerBoard[rowIndex][columnIndex] !== ' '){
-      console.log('This title has already been flipped');
+      //console.log('This title has already been flipped');
       return;
-    } else if (this._bombBoard[rowIndex][columnIndex] === 'B') {
+    }
+    if (this._bombBoard[rowIndex][columnIndex] === 'B') {
       this._playerBoard[rowIndex][columnIndex] = 'B';
     } else {
       this._playerBoard[rowIndex][columnIndex] = this.getNumberOfNeighborBombs(rowIndex, columnIndex);
     }
+    this._numberOfEmptySpaces--;
   }
 
   getNumberOfNeighborBombs (rowIndex, columnIndex) {
@@ -71,8 +74,12 @@ class Board{
     return numberOfBombs;
   }
 
-  hasSafeTiles (){
-    return this._numberOfTiles !== this._numberOfBombs;
+  //hasSafeTiles (){
+  //  return this._numberOfTiles !== this._numberOfBombs;
+  //}
+
+  hasNonBombEmptySpaces() {
+    return this._numberOfEmptySpaces !== this._numberOfBombs;
   }
 
   print() {
@@ -114,13 +121,13 @@ class Board{
       }
     } //end while
     return board;
-  };
+  }
 
 } //end of board class
 
-const g = new Game(3,3,3);
+//const g = new Game(3,3,3);
 
-g.playMove(2,2);
+//g.playMove(0,0);
 
 
 
